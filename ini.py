@@ -19,9 +19,9 @@ for i in range(n) :
             Y.append(y[j])
             X.append(x[j])
 
-
-plt.scatter(X,Y)
-
+for i in range(len(X)):
+    plt.text(X[i],Y[i], "(%d,%d)"%(X[i],Y[i]))
+plt.plot(X,Y,"bs")
 plt.savefig('graph.jpg')
 plt.show()
 
