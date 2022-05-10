@@ -22,7 +22,7 @@ for i in range(n) :
 for i in range(len(X)):
     plt.text(X[i],Y[i], "(%d,%d)"%(X[i],Y[i]))
 plt.plot(X,Y,"bs")
-plt.savefig('graph.jpg')
+plt.savefig('graph.png')
 plt.show()
 
 

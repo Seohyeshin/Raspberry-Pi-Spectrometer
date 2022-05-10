@@ -6,9 +6,10 @@ from tkinter.filedialog import asksaveasfile
 import os
 import cv2
 
-def open():
+def open(): 
+    # open file and graphing (gragh.png로 저장하고 화면에 띄우기)
     pass
-  
+
 def save():
     s=asksaveasfile(mode='w', defaultextension="*.txt")
     if s is None:
@@ -23,34 +24,34 @@ def add():
     add.title(os.path.basename(file) + " - 메모장")
     add.delete(1.0, END)
     f = open(file,"r")
-    add_file.insert(1.0,f.read())
+    add.insert(1.0,f.read())
     f.close()
 
 
-def graph():
-    #그래프 그리기
-    x = list(range(200,800,100))
-    y = [100, 20, 300, 50, 500, 300]
-    plt.plot(x, y)
-    n = len(y) - 2
-    Y = []
-    X = []
-    for i in range(n) :
-        j= i+1
-        if y[j] != 0:
-            if (y[j]-y[j-1]) > 0 and (y[j]-y[j+1]) >0:
-                Y.append(y[j])
-                X.append(x[j])
+# def graph():
+#     #그래프 그리기
+#     x = list(range(200,800,100))
+#     y = [100, 20, 300, 50, 500, 300]
+#     plt.plot(x, y)
+#     n = len(y) - 2
+#     Y = []
+#     X = []
+#     for i in range(n) :
+#         j= i+1
+#         if y[j] != 0:
+#             if (y[j]-y[j-1]) > 0 and (y[j]-y[j+1]) >0:
+#                 Y.append(y[j])
+#                 X.append(x[j])
 
-    plt.scatter(X,Y)
+#     plt.scatter(X,Y)
 
-    plt.savefig('graph.jpg')
-    img = cv2.imread('graph.jpg')
-    cv2.imwrite('graph.png',img)
+#     plt.savefig('graph.jpg')
+#     img = cv2.imread('graph.jpg')
+#     cv2.imwrite('graph.png',img)
 
 def init_form():
     root=Tk()
-    root.title("파일 선택")
+    root.title("spectrometer")
     root.geometry("640x690")
 
     menu=Menu(root)
@@ -72,10 +73,13 @@ def init_form():
 
 
     #그래프 띄우기
-    photo=PhotoImage(file='graph.png')
-    list_file=Label(root,image=photo , width=630, height=450)
-    list_file.pack(side="top")
-    
+    if os.path.isfile("graph.png"):
+        photo=PhotoImage(file='graph.png')
+        list_file=Label(root,image=photo , width=630, height=450)
+        list_file.pack(side="top")
+    else: 
+        list_file=Label(root, text = "그래프가 없습니다.", bg="white", width=60, height=20)
+        list_file.pack(side="top")
     
     #저장 경로
     path_frame=LabelFrame(root, text="불러오기")
