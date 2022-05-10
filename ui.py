@@ -7,7 +7,7 @@ import os
 import cv2
 
 def open(): 
-    # open file and graphing (gragh.png로 저장하고 화면에 띄우기)
+    # 1번 과제: open file (txt파일 형태의 문서를 읽어 리스트에 담는다.)
     pass
 
 def save():
@@ -29,25 +29,7 @@ def add():
 
 
 # def graph():
-#     #그래프 그리기
-#     x = list(range(200,800,100))
-#     y = [100, 20, 300, 50, 500, 300]
-#     plt.plot(x, y)
-#     n = len(y) - 2
-#     Y = []
-#     X = []
-#     for i in range(n) :
-#         j= i+1
-#         if y[j] != 0:
-#             if (y[j]-y[j-1]) > 0 and (y[j]-y[j+1]) >0:
-#                 Y.append(y[j])
-#                 X.append(x[j])
-
-#     plt.scatter(X,Y)
-
-#     plt.savefig('graph.jpg')
-#     img = cv2.imread('graph.jpg')
-#     cv2.imwrite('graph.png',img)
+# 파이썬 파일을 읽고 실행하는 코드 작성
 
 def init_form():
     root=Tk()
