@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 
 
-def wavetorgb(nm): ## 파장을 BGR로 변환하는 함수 /  파장값을 입력받으면 그에 해당하는 파장값을 튜플로 반환 
+def wavetorgb(nm): ## 파장을 BGR로 변환하는 함수 /  파장값을 입력받으면 그에 해당하는 BGR값을 튜플로 반환 
 
     gamma = 0.8
     max_intensity = 255
