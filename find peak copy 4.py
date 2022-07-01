@@ -1,17 +1,9 @@
 import cv2
-# from PIL import Image
 import numpy as np
-import math
-
-import os
-
-k = os.getcwd()
-print(k)
 
 ##변수 정의(가능하면 변경하지 말 것)
 
 ygra = 300 ## y그래프 높이
-# xgra = 25  ## x그래프 높이
 gx = 0 ## x그래프 여백
 gy = 60 ## y그래프 여백
 
@@ -81,15 +73,6 @@ def imgshow(img): ##이미지 출력함수
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-def imginf(img):  ##이미지 높이 너비 채널 정보 얻기
-    h,w,c = img.shape   
-    return h,w,c
-
-def pixinf(img,x,y): ## x,y위치에 있는 bgr 정보 얻기 
-    bgr = img[y,x]
-    return bgr
-
-
 ## 2. 텍스트파일 입출력
 
 
@@ -116,8 +99,6 @@ mul = 3 ## 그래프 글자 크기를 설정(가능하면 변경하지 말 것)
 def cvgraph(clist): ## 그래프 그리는 함수  
 
     lt = len(clist)
-    max2 = int(max(clist))
-    # print(max2)
     sketch = wave(lt)
     for i in range(lt):
         color = wavetorgb(i+380)
@@ -142,16 +123,13 @@ def wave(lt): ## 그래프의 틀 만드는 함수
         if (i-20*mul)%(50*mul) == 0:
             text = str(int(380+i/mul)) + 'nm'
             cv2.line(sketch,(i+gx,0),(i+gx,ygra1),(220,220,220),2,cv2.LINE_4)
-            cv2.line(sketch,(i+gx,ygra1),(i+gx,ygra1),(255,0,0),2,cv2.LINE_4)
             cv2.putText(sketch,text,(i-16*mul,ygra1+gy-25),font,1,(0,0,0),2)
 
     for j in range(ygra1): ##가로선 그리기 
         if j == 0:
             cv2.line(sketch,(0+gx,ygra1),(xl+gx,ygra1),(0,0,0),3,cv2.LINE_4)
         elif j%100 == 0:
-            # text = str(int(j/3))
             cv2.line(sketch,(0+gx,j),(xl+gx,j),(220,220,220),2,cv2.LINE_4)
-            # cv2.putText(sketch,text,(0,ygra1-j),font,1,(0,0,0),2)
     sketch = cv2.resize(sketch,(lt,ygra),interpolation=cv2.INTER_AREA)
     return sketch
 
@@ -167,11 +145,6 @@ def cvgraphp(clist,plist,l): ## grayscale리스트와 피크점 리스트를 받
     for i in range(lt):
         color = wavetorgb(i+380)
         y = int(clist[i])
-        # if cal ==1:
-        #     y = cha(y,i,max2)                 ####값 보정
-        # if cal ==1:
-        #     y = cha1(y,i)
-        # y = cha2(y,i)
 
         cv2.line(sketch,(i+int(gx/mul),ygra-int(gy/mul)),(i+int(gx/mul),ygra-y-int(gy/mul)),color,1,cv2.LINE_4)
         if i>0:
@@ -196,16 +169,14 @@ def wavep(clist,plist,l):   ## 그래프 틀 만드는 함수(lt는 x축 변수,
         if (i-20*mul)%(50*mul) == 0:
             text = str(int(380+i/mul)) + 'nm'
             cv2.line(sketch,(i+gx,0),(i+gx,ygra1),(220,220,220),2,cv2.LINE_4)
-            # cv2.line(sketch,(i+gx,ygra1),(i+gx,ygra1),(255,0,0),2,cv2.LINE_4)
             cv2.putText(sketch,text,(i-16*mul,ygra1+gy-25),font,1,(0,0,0),2)
 
     for j in range(ygra1): ##가로선 그리기 
         if j == 0:
             cv2.line(sketch,(0+gx,ygra1),(xl+gx,ygra1),(0,0,0),3,cv2.LINE_4)
         elif j%100 == 0:
-            # text = str(int(j/3))
             cv2.line(sketch,(0+gx,j),(xl+gx,j),(220,220,220),2,cv2.LINE_4)
-            # cv2.putText(sketch,text,(0,ygra1-j),font,1,(0,0,0),2)
+
 
     for i in range(len(plist)): ## 피크점 표시 
         text = str(plist[i]+380)
@@ -314,7 +285,7 @@ def setnm(x1,x2,nm1,nm2): ## 두 픽셀x위치의 의 간격을 nm만큼의 파�
     cv2.waitKey(0)
     cv2.destroyAllWindows
 
-def imgrgb(img):  ##한 열의 gray값을 각각 더한후 각 열의 gray값의 평균을 구하는 함수 
+def imgrgb(img):  ##이미지를 받아 한 열의 gray값을 각각 더한후 각 열의 gray값의 평균을 구하는 함수 
     h = img.shape[0]
     w = img.shape[1]
     clist = []
@@ -423,7 +394,7 @@ def peak(clist,n):  ## 블록화된 리스트를 기반으로 피크점 구하�
 ##프로그램 실행 
 
 
-## 1. 보정값 기준 스펙트럼 리스트 생성 (produce mono spcetrum info list)
+## 1. 보정값 스펙트럼 리스트 생성 
 
 ## 1-1. 컴퓨터로 그린 스펙트럼값을 기준으로 정한 보정값 
 
@@ -431,9 +402,9 @@ gs = cvtnm(1,0)
 
 ## 1-2. 이미지로 받은 스펙트럼값을 기준으로 정한 보정값 
 
-std = cv2.imread("stimg.png")                 ## 사진으로 받은 이미지를 기준으로 정한 보정값      
-std = cv2.flip(std,1)                       ## 이미지 좌우반전(파장은 380~780nm(보라색파장부터 빨간색파장까지)이미지정렬이 되어야함 
-std = cv2.cvtColor(std,cv2.COLOR_BGR2GRAY)  ## 이미지를 흑백으로 변환하기 convert img to grapscale
+std = cv2.imread("stimg.png")               ## 사진으로 받은 이미지를 기준으로 정한 보정값      
+# std = cv2.flip(std,1)                       ## 이미지 좌우반전(파장은 380~780nm(보라색파장부터 빨간색파장)순서로 이미지정렬이 되어야함) 
+std = cv2.cvtColor(std,cv2.COLOR_BGR2GRAY)  ## 이미지를 흑백으로 변환하기 
 
 gg = stimg(std) ##이미지보강 기준점 생성 
 mg = max(gg)    ##이미지보강 기준 max값 생성 
@@ -456,7 +427,8 @@ img = cvgraph(readtxt)                                   ## 그래프 그리기 
 imgshow(img)
 
 
-q = list1
+
+
 
 # 3. 각 보정방법에 따른 피크점 구하기 
 
@@ -464,92 +436,95 @@ q = list1
 
 # 3-1. 컴퓨터로 그린 스펙트럼을 보정값으로 사용
 
+q = list1
 s = cali1(q) 
 
-# for i in range(1,25):
-#     pn = i
-#     second = block1(s,pn)
-#     peak1 = peak(second,pn)
-#     img = cvgraphp(s,peak1,0)
-#     img1 = cvgraphp(second,peak1,0)
-#     cv2.imshow('originalgraph1',img)
-#     cv2.imshow('blockgraph1',img1)
-#     cv2.waitKey(250)
-# cv2.destroyAllWindows()
-
-# # 3-2. 이미지로 받은 스펙트럼을 보정값으로 사용 
-
-# s = cali2(q,gg,mg) 
-
-# for i in range(1,25):
-#     pn = i
-#     second = block1(s,pn)
-#     peak1 = peak(second,pn)
-#     img = cvgraphp(s,peak1,0)
-#     img1 = cvgraphp(second,peak1,0)
-#     cv2.imshow('originalgraph2',img)
-#     cv2.imshow('blockgraph2',img1)
-#     cv2.waitKey(250)
-# cv2.destroyAllWindows()
-# # 3-3. 이미지의 특정 grayscale이상의 값을 갖는 값을 기준으로 리스트를 생성
-
-# s = cali3(ori,25)  
-
-# for i in range(1,25):
-#     pn = i
-#     second = block1(s,pn)
-#     peak1 = peak(second,pn)
-#     img = cvgraphp(s,peak1,0)
-#     img1 = cvgraphp(second,peak1,0)
-#     cv2.imshow('originalgraph3',img)
-#     cv2.imshow('blockgraph3',img1)
-#     cv2.waitKey(250)
-# cv2.destroyAllWindows()
-# # 3-4. 기준 리스트와 유사도로 리스트를 생성 
-
-# s = cali4(q,gs)  ##컴퓨터로 생성한 스펙트럼의 리스트인 gs를 기준으로 생성
-
-# for i in range(1,25):
-#     pn = i
-#     second = block1(s,pn)
-#     peak1 = peak(second,pn)
-#     img = cvgraphp(s,peak1,0)
-#     img1 = cvgraphp(second,peak1,0)
-#     cv2.imshow('originalgraph4',img)
-#     cv2.imshow('blockgraph4',img1)
-#     cv2.waitKey(250)
-# cv2.destroyAllWindows()
-
-
-
-#카메라를 통해 실시간으로 그래프 그리기(여기서는 3-4번 보정방법을 사용하였고 보정값은 3으로 설정)
-
-
-cap = cv2.VideoCapture(0,cv2.CAP_ANY)  ## for laptop camera 
-# cap = cv2.VideoCapture(0,cv2.CAP_V4L) ## for raspberry camera 
-
-pn = 3 ##보정값 
-
-while cap.isOpened():
-
-    ret, img = cap.read()
-    
-    img = cv2.resize(img,(400,300))
-    img = cv2.flip(img,1)
-    sketch = img[0:300,0:400]
-    cv2.imshow('camera',sketch)
-    img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    list1 = imgrgb(img)
-    list1 = cali4(list1,gs)
-
-    second = block(list1,pn)
+for i in range(1,25):
+    pn = i
+    second = block1(s,pn)
     peak1 = peak(second,pn)
-    img = cvgraphp(list1,peak1,1)
-
-    cv2.imshow('result', img)
-    
-    if cv2.waitKey(25) == ord('q'):
-        
-        break
+    img = cvgraphp(s,peak1,0)
+    img1 = cvgraphp(second,peak1,0)
+    cv2.imshow('originalgraph1',img)
+    cv2.imshow('blockgraph1',img1)
+    cv2.waitKey(100)
 cv2.destroyAllWindows()
-cap.release() # 동영상 파일 닫고 메모리 해제
+
+# 3-2. 이미지로 받은 스펙트럼을 보정값으로 사용 
+
+s = cali2(q,gg,mg) 
+
+for i in range(1,25):
+    pn = i
+    second = block1(s,pn)
+    peak1 = peak(second,pn)
+    img = cvgraphp(s,peak1,0)
+    img1 = cvgraphp(second,peak1,0)
+    cv2.imshow('originalgraph2',img)
+    cv2.imshow('blockgraph2',img1)
+    cv2.waitKey(100)
+cv2.destroyAllWindows()
+
+# 3-3. 이미지의 특정 grayscale이상의 값을 갖는 값을 기준으로 리스트를 생성
+
+s = cali3(ori,25)  
+
+for i in range(1,25):
+    pn = i
+    second = block1(s,pn)
+    peak1 = peak(second,pn)
+    img = cvgraphp(s,peak1,0)
+    img1 = cvgraphp(second,peak1,0)
+    cv2.imshow('originalgraph3',img)
+    cv2.imshow('blockgraph3',img1)
+    cv2.waitKey(100)
+cv2.destroyAllWindows()
+
+# 3-4. 기준 리스트와 유사도로 리스트를 생성 
+
+s = cali4(q,gs)  ##컴퓨터로 생성한 스펙트럼의 리스트인 gs를 기준으로 생성
+
+for i in range(1,25):
+    pn = i
+    second = block1(s,pn)
+    peak1 = peak(second,pn)
+    img = cvgraphp(s,peak1,0)
+    img1 = cvgraphp(second,peak1,0)
+    cv2.imshow('originalgraph4',img)
+    cv2.imshow('blockgraph4',img1)
+    cv2.waitKey(100)
+cv2.destroyAllWindows()
+
+
+
+# 카메라를 통해 실시간으로 그래프 그리기(여기서는 3-4번 보정방법을 사용하였고 보정값은 3으로 설정)
+
+
+# cap = cv2.VideoCapture(0,cv2.CAP_ANY)  ## for laptop camera 
+# # cap = cv2.VideoCapture(0,cv2.CAP_V4L) ## for raspberry camera 
+
+# pn = 3 ##보정값 
+
+# while cap.isOpened():
+
+#     ret, img = cap.read()
+    
+#     img = cv2.resize(img,(400,300))
+#     img = cv2.flip(img,1)
+#     sketch = img[0:300,0:400]
+#     cv2.imshow('camera',sketch)
+#     img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+#     list1 = imgrgb(img)
+#     list1 = cali4(list1,gs)
+
+#     second = block1(list1,pn)
+#     peak1 = peak(second,pn)
+#     img = cvgraphp(list1,peak1,0)
+
+#     cv2.imshow('result', img)
+    
+#     if cv2.waitKey(125) == ord('q'):
+        
+#         break
+# cv2.destroyAllWindows()
+# cap.release() # 동영상 파일 닫고 메모리 해제
