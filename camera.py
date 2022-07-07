@@ -8,7 +8,7 @@ def save_window():
     global png
     Save_file = cv2.imread("graph.png")
     cv2.imwrite("save.png", Save_file)
-    window2 = Tk()
+    window2 = Toplevel(window)
     window2.title("Image Save")
     window2.geometry("600x400")
     saveFrame = Frame(window2, width= 600, height=400)
@@ -59,6 +59,7 @@ lmain.place(x=350, y=0)
 cap=cv2.VideoCapture(0)
 
 def video_stream():
+
     ret, frame = cap.read()
 
     cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -66,15 +67,19 @@ def video_stream():
     imgtk = ImageTk.PhotoImage(image=img)
     lmain.imgtk = imgtk
     lmain.configure(image=imgtk)
+    lmain.after(10, video_stream)
+
+def make_graph():
 
     ini.making()
     gray=ImageTk.PhotoImage(file='graph.png')
     graph.imgtk = gray
     graph.configure(image=gray)
 
-    lmain.after(10, video_stream)
+    graph.after(10, make_graph)
 
 
 video_stream()
+make_graph()
    
 window.mainloop()
